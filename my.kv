@@ -1,0 +1,212 @@
+#:import images_path kivymd.images_path
+<ClipboardKid>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "40dp"
+
+
+<Content>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "80dp"
+
+
+
+    MDTextField:
+        id: id_textfield  
+        hint_text: "Введите имя"
+
+
+
+<ISpectateDialog>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        id: name_textfield_spectator  
+        hint_text: "Введите имя"
+
+    MDTextField:
+        id: id_textfield_spectator  
+        hint_text: "Вствьте скопированный ID"
+
+<Dialog_limit>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "80dp"
+    id: id_limit_dialog
+
+<DialogBackgroundPermission>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "80dp"
+
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#e7e4c0"
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    ripple_color: "#c5bdd2"
+    selected_color: "#0c6c4d"
+
+
+<DrawerLabelItem@MDNavigationDrawerItem>
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    focus_behavior: False
+    selected_color: "#4a4939"
+    _no_ripple_effect: True   
+
+
+MI:
+    nav_drawer: nav_drawer
+    screen_manager: screen_manager
+    orientation: 'vertical'
+    
+    MDScreen:
+        id: root_screen
+
+        MDNavigationLayout:
+
+            MDScreenManager:
+                id: screen_manager
+
+                MapScreen:
+                    name: "scr 1"
+                    MDBoxLayout:
+
+                        MapView:
+                            id: map_view
+                            size_hint: 1, 1
+                            zoom: 30
+
+                            MapMarkerPopup:
+                                lat: app.latitude
+                                lon: app.longitude
+
+                    
+                    MDBoxLayout:
+                        MDScrollView:
+                            
+                            size_hint_y: .22
+                            MDList:
+                                md_bg_color: app.theme_cls.primary_dark
+                                id: buttons_list
+
+
+                MySpectatorsScreen:
+                    id: my_spectators
+                    name: "scr 2"
+                    MDScrollView:
+                        size_hint_y: .9
+                        MDList:
+                            id: lister_i_spectate
+
+                    
+                DonateScreen:
+                    id: donate_screen
+                    name: "scr 3"
+                    
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDBoxLayout:
+                        MDBoxLayout:
+                            MDLabel:
+                                padding: [15, 15, 15, 15]
+                                text: "Вы можете поддержать проект. Приложение будет оставаться бесплатным и будут добавляться новые функции."
+                                halign: "center"
+                        MDRelativeLayout:
+                            
+                            MDRoundFlatIconButton:
+                                text: "MDRoundFlatIconButton"
+                                icon: "hand-coin"
+                                text_color: "white" 
+                                pos_hint: {"center_x": .5, "center_y": .5}
+                        MDBoxLayout:
+                    
+                    
+                    
+
+                      
+
+            MDTopAppBar:
+                title: "My Family Tracker"
+                elevation: 4
+                pos_hint: {"top": 1}
+                md_bg_color: app.theme_cls.primary_dark
+                right_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+
+                        
+
+            MDNavigationDrawer:
+                anchor: "right"
+                id: nav_drawer
+                radius: (0, 16, 16, 0)
+
+                
+                
+
+                MDNavigationDrawerMenu:
+                    screen_manager: screen_manager
+                    nav_drawer: nav_drawer
+
+                    MDNavigationDrawerHeader:
+                        title: "Меню"
+                        title_color: "#4a4939"
+                        # text: "Header text"
+                        spacing: "4dp"
+                        padding: "12dp", 0, 0, "56dp"
+                        
+
+                    MDNavigationDrawerLabel:
+                        text: "Настройки"
+
+                    DrawerClickableItem:
+                        id: unique_id_to_copy
+                        icon: "account"
+                        text: "Мой id"
+                        right_text: str(app.recive_my_unique_id())
+                        on_press:
+                            root.nav_drawer.set_state("close")
+                            app.background_permission_popup()
+                            app.copy_unique_id_to_clipboard(str(app.recive_my_unique_id()))
+                            app.open_snackbar_sucsess_copy()
+                            
+
+                    DrawerClickableItem:
+                        
+                        icon: "google-maps"
+                        
+                        text_right_color: "#4a4939"
+                        text: "Карта"
+                        on_press:
+                            root.nav_drawer.set_state("close")
+                            root.screen_manager.current = "scr 1"
+                            app.refresh_all_buttons_map()
+
+                            
+                            
+
+                    DrawerClickableItem:
+                        id: i_spectate_drawer
+                        icon: "eye-plus-outline"
+                        right_text: 
+                        text: "Я отслеживаю"
+                        on_press:
+                            root.nav_drawer.set_state("close")
+                            root.screen_manager.current = "scr 2"
+
+                    DrawerClickableItem:
+                        id: donate_drawer
+                        icon: "hand-coin"
+                        right_text: 
+                        text: "Поддержать проект"  #Support Project
+                        on_press:
+                            root.nav_drawer.set_state("close")
+                            root.screen_manager.current = "scr 3"
+
